@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS products;
 
 create table products
 (
-    id VARCHAR(240),
+    id UUID,
     name VARCHAR(240),
     description VARCHAR(240),
     price DOUBLE PRECISION,

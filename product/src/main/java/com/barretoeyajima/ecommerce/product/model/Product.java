@@ -16,11 +16,13 @@ public class Product {
     private String description;
     private Double price;
     private String category;
+    @Column(name = "imageurl")
     private String imageUrl;
     private String sku;
     private String brand;
     private Double weight;
     private boolean available;
+    @Column(name = "stocklevel")
     private int stockLevel;
 
 

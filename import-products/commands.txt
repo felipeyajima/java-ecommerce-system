@@ -1,0 +1,5 @@
+docker-compose up --format json
+ou
+docker-compose up
+
+to execute Postgresql in Docker
