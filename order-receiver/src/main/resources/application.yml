@@ -1,0 +1,19 @@
+spring.application.name: order-receiver
+server.port: 9002
+
+spring:
+
+  cloud:
+    stream:
+      bindings:
+        publishNewOrderEvent-out-0:
+          destination: OrderProcessing1 #exchange name
+          group: orderingcreation1
+
+
+
+  rabbitmq:
+    host: ${RMQ_HOSTNAME:localhost}
+    port: ${RMQ_PORT:5672}
+    username: ${RMQ_USERNAME:guest}
+    password: ${RMQ_PASSWORD:guest}
