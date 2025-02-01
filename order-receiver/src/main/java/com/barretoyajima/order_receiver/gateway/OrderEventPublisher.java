@@ -11,13 +11,17 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-@Slf4j
-@AllArgsConstructor
+//@Slf4j
+
 @Configuration
 public class OrderEventPublisher {
 
-    @Autowired
-    private OrderEventPublisherService orderEventPublisherService;
+
+    private final OrderEventPublisherService orderEventPublisherService;
+
+    public OrderEventPublisher(OrderEventPublisherService orderEventPublisherService) {
+        this.orderEventPublisherService = orderEventPublisherService;
+    }
 
     @Bean
     public Supplier<NewOrderEvent> publishNewOrderEvent(){

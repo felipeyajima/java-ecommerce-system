@@ -10,8 +10,8 @@ import java.util.UUID;
 
 
 @NoArgsConstructor
-@Getter
-@Setter
+//@Getter
+//@Setter
 @Entity
 @Table(name = "PRODUCT")
 @AllArgsConstructor

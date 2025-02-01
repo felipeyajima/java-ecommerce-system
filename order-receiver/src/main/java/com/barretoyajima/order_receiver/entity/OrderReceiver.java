@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
-@Getter
-@Setter
+//@Getter
+//@Setter
 @Entity
 @Table(name = "ORDER_RECEIVER")
 @Builder
