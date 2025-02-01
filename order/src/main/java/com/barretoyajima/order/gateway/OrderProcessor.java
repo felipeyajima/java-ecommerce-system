@@ -19,6 +19,12 @@ public class OrderProcessor {
 
     @Bean
     public Function<NewOrderReceivedEvent, OrderEvent> orderProcess(){
+        return newOrderReceivedEvent -> {
+            OrderEvent orderEvent = orderService.orderProcess(newOrderReceivedEvent);
 
+            //log.info("publicando order status: {} ****", orderEvent.orderStatusList().size());
+
+            return (orderEvent.orderStatusList().isEmpty()) ? null: orderEvent;
+        };
     }
 }

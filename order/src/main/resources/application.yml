@@ -11,9 +11,15 @@ spring:
 #    show-sql: false
 
 
-#  cloud:
-#    stream:
-#      bindings:
+  cloud:
+    stream:
+      bindings:
+        orderProcess-in-0:
+          destination: OrderProcessing1 #exchange name
+          group: orderingcreation1
+        orderProcess-out-0:
+          destination: OrderPopulation
+          group: orderingcreation1
 
 
 

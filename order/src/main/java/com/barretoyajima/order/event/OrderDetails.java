@@ -1,36 +1,20 @@
-package com.barretoyajima.order_receiver.dto;
+package com.barretoyajima.order.event;
 
-//import com.barretoyajima.order_receiver.entity.Product;
+import com.barretoyajima.order.entity.Product;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
-@Data
 @Getter
 @Setter
 @Builder
-public class OrderReceiverRequest {
-
-    @NonNull
-    private Long id;
-    @NonNull
+@AllArgsConstructor
+@NoArgsConstructor
+public class OrderDetails {
     private UUID clientId;
-    /*
-      @NonNull
-      private List<Product> products = new ArrayList<>();
-
-
-     */
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private List<Product> products = new ArrayList<>();
 
     public UUID getClientId() {
         return clientId;
@@ -39,7 +23,7 @@ public class OrderReceiverRequest {
     public void setClientId(UUID clientId) {
         this.clientId = clientId;
     }
-/*
+
     public List<Product> getProducts() {
         return products;
     }
@@ -47,6 +31,4 @@ public class OrderReceiverRequest {
     public void setProducts(List<Product> products) {
         this.products = products;
     }
-
- */
 }

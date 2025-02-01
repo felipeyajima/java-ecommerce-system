@@ -1,5 +1,6 @@
 package com.barretoyajima.order.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Entity
 @Table(name="addressorder")
 public class Address {
+
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,5 +24,6 @@ public class Address {
     private String place;
     private String number;
     private String complement;
+
 
 }

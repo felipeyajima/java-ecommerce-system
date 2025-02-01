@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 @AllArgsConstructor
 @Slf4j
 @Service
@@ -33,10 +32,10 @@ public class OrderReceiverService {
 
     public OrderReceiver saveOrderReceived(OrderReceiver orderReceiver) {
 
-            orderReceiver.setProcessed(false);
-            OrderReceiver orderReceiverSaved = orderReceiverRepository.save(orderReceiver);
+        orderReceiver.setProcessed(false);
+        OrderReceiver orderReceiverSaved = orderReceiverRepository.save(orderReceiver);
 
-            return orderReceiverSaved;
+        return orderReceiverSaved;
 
     }
 

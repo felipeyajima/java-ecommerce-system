@@ -1,13 +1,11 @@
 package com.barretoyajima.order.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.Id;
 
 import java.util.UUID;
+
 
 @Builder
 @AllArgsConstructor
@@ -15,14 +13,16 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name="customerorder")
+@Table(name = "CUSTOMERORDER")
 public class Customer {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Long id;
+    private Long id;
+
     private UUID customerId;
     private String name;
     private String documentNumber;
+
+
 
 }
