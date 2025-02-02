@@ -17,13 +17,14 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping
+    @RequestMapping(method = { RequestMethod.GET })
     public ResponseEntity<Page<Product>> obterTodos(Pageable pageable){
         Page<Product> products = this.productService.obterTodos(pageable);
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("/{codigo}")
+    //@GetMapping("/{codigo}")
+    @RequestMapping(value = "/{uuid}", method = { RequestMethod.GET })
     public Product obterPorId(@PathVariable UUID uuid){
         return this.productService.obterPorCodigo(uuid);
     }
@@ -38,7 +39,7 @@ public class ProductController {
         this.productService.atualizar(product);
     }
 
-    @DeleteMapping("/{codigo}")
+    @RequestMapping(value = "/{uuid}", method = { RequestMethod.DELETE })
     public void deleteProduto(@PathVariable UUID uuid){
          this.productService.deletarPorId(uuid);
     }

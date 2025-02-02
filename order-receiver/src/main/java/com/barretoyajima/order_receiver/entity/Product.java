@@ -1,14 +1,11 @@
 package com.barretoyajima.order_receiver.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
-
+//@Data
 @NoArgsConstructor
 //@Getter
 //@Setter
@@ -48,4 +45,5 @@ public class Product {
     public void setQuantities(int quantities) {
         this.quantities = quantities;
     }
+
 }

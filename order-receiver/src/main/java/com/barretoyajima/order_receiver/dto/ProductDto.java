@@ -1,23 +1,19 @@
-package com.barretoyajima.order_receiver.event;
-
-import lombok.Data;
+package com.barretoyajima.order_receiver.dto;
 
 import java.util.UUID;
 
+public class ProductDto {
 
-public class ProductDetails {
-
-    private UUID productIdentificator;
-    private Integer quantities;
-
-
-    public ProductDetails(UUID productIdentificator, Integer quantities) {
+    public ProductDto(UUID productIdentificator, int quantities) {
         this.productIdentificator = productIdentificator;
         this.quantities = quantities;
     }
 
-    public ProductDetails() {
+    public ProductDto() {
     }
+
+    private UUID productIdentificator;
+    private int quantities;
 
 
     public UUID getProductIdentificator() {
@@ -28,11 +24,11 @@ public class ProductDetails {
         this.productIdentificator = productIdentificator;
     }
 
-    public Integer getQuantities() {
+    public int getQuantities() {
         return quantities;
     }
 
-    public void setQuantities(Integer quantities) {
+    public void setQuantities(int quantities) {
         this.quantities = quantities;
     }
 }

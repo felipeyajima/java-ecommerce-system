@@ -1,12 +1,12 @@
 package com.barretoyajima.order_receiver.event;
 
 
+import com.barretoyajima.order_receiver.dto.ProductDto;
 import com.barretoyajima.order_receiver.entity.Product;
 import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 
 @Builder
 public class OrderDetails {

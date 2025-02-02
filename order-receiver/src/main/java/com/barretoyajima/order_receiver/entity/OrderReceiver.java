@@ -1,5 +1,6 @@
 package com.barretoyajima.order_receiver.entity;
 
+import com.barretoyajima.order_receiver.dto.ProductDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,7 +24,7 @@ public class OrderReceiver {
 
     private UUID clientId;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private List<Product> products = new ArrayList<>();
 
     private boolean processed;

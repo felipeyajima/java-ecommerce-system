@@ -11,7 +11,13 @@ spring:
 #    show-sql: false
 
 
+
   cloud:
+    openfeign:
+      client:
+        config:
+          products-api:
+            url: http://localhost:9001
     stream:
       bindings:
         orderProcess-in-0:

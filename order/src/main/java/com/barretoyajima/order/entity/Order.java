@@ -1,5 +1,6 @@
 package com.barretoyajima.order.entity;
 
+import com.barretoyajima.order.dto.ProductDto;
 import jakarta.persistence.*;
 import lombok.*;
 

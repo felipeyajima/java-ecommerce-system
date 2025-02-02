@@ -27,36 +27,31 @@ public class OrderEventPublisherService {
         this.orderReceiverRepository = orderReceiverRepository;
     }
 
-
     public Optional<NewOrderEvent> publishEvent() {
 
         List<OrderReceiver> orderReceiverList = orderReceiverRepository.findByProcessed(false);
 
         List<OrderDetails> orderDetails = orderReceiverList.stream().map(order -> {
+
             OrderDetails orderDetail1 = OrderDetails.builder().build();
-            //OrderDetails orderDetail1 = new OrderDetails();
-            System.out.println("clientId: " + order.getClientId());
+
             BeanUtils.copyProperties(order, orderDetail1);
-            orderDetail1.setClientId(order.getClientId());
 
             List<ProductDetails> productList = new ArrayList<>();
-            ProductDetails product = new ProductDetails();
-            product.setProductIdentificator(UUID.randomUUID());
-            product.setQuantities(2);
-            //BeanUtils.copyProperties(order.getProducts(), orderDetail1.getProducts());
-            //List<Product> products = new ArrayList<>();
-            productList.add(product);
+
+            for (int i = 0; i < order.getProducts().size(); i++) {
+                ProductDetails productDetailsInternal = new ProductDetails();
+                productDetailsInternal.setProductIdentificator(order.getProducts().get(i).getProductIdentificator());
+                productDetailsInternal.setQuantities(order.getProducts().get(i).getQuantities());
+                productList.add(productDetailsInternal);
+            }
 
             orderDetail1.setProducts(productList);
 
-            System.out.println("cli: "  + orderDetail1.getClientId());
-            //System.out.println("prod: " + orderDetail1.getProducts().size());
-            System.out.println("prodc: " + orderDetail1.getProducts().size());
-
-            //System.out.println("novo objeto:" + orderDetail1.getClientId());
             order.setProcessed(true);
             return orderDetail1;
         }).toList();
+
 
         log.info("###### Checked for new Order request, available recordes for process: {} ", orderReceiverList.size());
         Optional<NewOrderEvent> eventToPublish = Optional.empty();

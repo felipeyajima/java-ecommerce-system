@@ -2,6 +2,7 @@ package com.barretoyajima.order.gateway;
 
 import com.barretoyajima.order.event.NewOrderReceivedEvent;
 import com.barretoyajima.order.event.OrderEvent;
+import com.barretoyajima.order.integration.ProductClient;
 import com.barretoyajima.order.service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ public class OrderProcessor {
 
     @Autowired
     private OrderService orderService;
+
 
     @Bean
     public Function<NewOrderReceivedEvent, OrderEvent> orderProcess(){
