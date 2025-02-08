@@ -7,14 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Getter
-@Setter
+
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class OrderStatus {
-    private UUID clientId;
-    private List<Product> products = new ArrayList<>();
+    //private UUID clientId;
+    //private List<Product> products = new ArrayList<>();
+    private UUID orderId;
     private Status status;
 
     public enum Status {
@@ -24,21 +22,20 @@ public class OrderStatus {
         FINISHED
     }
 
-
-    public UUID getClientId() {
-        return clientId;
+    public OrderStatus(UUID orderId, Status status) {
+        this.orderId = orderId;
+        this.status = status;
     }
 
-    public void setClientId(UUID clientId) {
-        this.clientId = clientId;
+    public OrderStatus() {
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public UUID getOrderId() {
+        return orderId;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setOrderId(UUID orderId) {
+        this.orderId = orderId;
     }
 
     public Status getStatus() {

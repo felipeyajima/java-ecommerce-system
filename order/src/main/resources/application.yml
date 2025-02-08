@@ -18,6 +18,10 @@ spring:
         config:
           products-api:
             url: http://localhost:9001
+          customer-api:
+            url: http://localhost:9000
+          bill-api:
+            url: http://localhost:9004
     stream:
       bindings:
         orderProcess-in-0:

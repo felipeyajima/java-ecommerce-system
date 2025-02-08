@@ -1,18 +1,22 @@
 package com.barretoyajima.order.service;
 
-import com.barretoyajima.order.entity.Order;
+import com.barretoyajima.order.controller.exception.ControllerNotFoundException;
+import com.barretoyajima.order.entity.*;
 import com.barretoyajima.order.event.NewOrderReceivedEvent;
 import com.barretoyajima.order.event.OrderDetails;
 import com.barretoyajima.order.event.OrderEvent;
 import com.barretoyajima.order.event.OrderStatus;
-import com.barretoyajima.order.integration.ProductClient;
-import com.barretoyajima.order.integration.ProductRequest;
+import com.barretoyajima.order.integration.*;
 import com.barretoyajima.order.repository.OrderRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,41 +29,104 @@ public class OrderService {
     private ProductClient productClient;
 
     @Autowired
+    private CustomerClient customerClient;
+    @Autowired
+    private BillClient billClient;
+
+
+    @Autowired
     private OrderRepository orderRepository;
     public OrderEvent orderProcess(NewOrderReceivedEvent newOrderReceivedEvent) {
         List<OrderDetails> orderDetailsList = newOrderReceivedEvent.orderDetailsList();
+
         List<OrderStatus> orderStatusList = orderDetailsList.stream().map(orderDetails -> {
-           //##OrderStatus orderStatus = OrderStatus.builder().build();
+
+            Address address = new Address();
+            Customer customer = new Customer();
+            Payment payment = new Payment();
+            Product product = new Product();
+            Order order = new Order();
 
 
-            ProductRequest productRequest = productClient.retrieveProduct(UUID.fromString("4fa84e64-1f7c-4fb3-b558-6a915e04bfd1"));
-            System.out.println("produto pela api de produto : " + productRequest.getName());
+            System.out.println("indo ate a api de customer");
+            CustomerRequest customerRequest = customerClient.retrieveCustomer(orderDetails.getClientId());
+
+            customer.setCustomerId(customerRequest.getId());
+            customer.setName(customerRequest.getName());
+            customer.setDocumentNumber(customerRequest.getCpf());
+
+            address.setPlace(customerRequest.getAddress());
+            address.setNumber(customerRequest.getAddressNumber().toString());
+            address.setPostalCode("00000000");
+            address.setComplement("sem complemento");
+
+            Double totalCostOfProducts = 0.0;
+            Double totalWeight = 0.0;
+            Double deliveryCost = 10.0;
 
 
 
+            List<Product> products = new ArrayList<>();
+
+            for (int i = 0; i < orderDetails.getProducts().size(); i++) {
+                ProductRequest productRequest = productClient.retrieveProduct(orderDetails.getProducts().get(i).getProductIdentificator());
+                Product internalProduct = new Product();
+                internalProduct.setQuantity(orderDetails.getProducts().get(i).getQuantities());
+                internalProduct.setProductId(productRequest.getId());
+                internalProduct.setName(productRequest.getName());
+                internalProduct.setSku(productRequest.getSku());
+                internalProduct.setBrand(productRequest.getBrand());
+                internalProduct.setPrice(productRequest.getPrice());
+
+                products.add(internalProduct);
+
+                totalCostOfProducts += internalProduct.getQuantity() * internalProduct.getPrice();
+                totalWeight += productRequest.getWeight();
 
 
+            }
 
-            System.out.println("clientId: " + orderDetails.getClientId());
-            System.out.println("qtd de produtos" + orderDetails.getProducts().size());
+            System.out.println("custo total do pedido: " + totalCostOfProducts);
+
+
+            BillRequest billRequest = new BillRequest();
+            UUID internalOrderId = UUID.randomUUID();
+            order.setId(internalOrderId);
+            order.setProductList(products);
+            order.setCustomer(customer);
+            order.setPayment(payment);
+            order.setOrderDateRequested(LocalDateTime.now());
+            order.setTotalWeight(totalWeight);
+            order.setTotalAmount(totalCostOfProducts);
+            order.setDeliveryEstimation(LocalDateTime.now().plusDays(1));
+            order.setDeliveryAddress(address);
+            order.setDeliveryPrice(deliveryCost);
+            order.setStatus("CREATED");
+
+
+            billRequest.setCost(totalCostOfProducts + deliveryCost);
+            billRequest.setDemand(order.getId());
+
+            try {
+                BillResponse postedBill = billClient.postBill(billRequest);
+                payment.setBill(postedBill.getId());
+
+            } catch (RuntimeException e) {
+                System.out.println("FALHA AO CHAMAR O SERVICO DE BILLING");
+            }
 
 
             OrderStatus orderStatus = new OrderStatus();
-            //BeanUtils.copyProperties(orderDetail, orderStatus);
-            //##log.info("order detail: " + orderDetail.getClientId());
+            orderStatus.setStatus(OrderStatus.Status.CREATED);
+            orderStatus.setOrderId(internalOrderId);
 
-            //orderStatus.setStatus(OrderStatus.Status.CREATED);
-
-            System.out.println(orderDetails);
-
+            orderRepository.save(order);
             return orderStatus;
-
-
         }).toList();
 
-
         OrderEvent orderEvent = new OrderEvent(orderStatusList);
-        //saveOrderStatus(orderStatusList);
+        saveOrderStatus(orderStatusList);
+
         return orderEvent;
     }
 
@@ -67,11 +134,19 @@ public class OrderService {
 
         List<Order> orderList = orderStatusList.stream().map(orderStatus -> {
             Order order = new Order();
-            //BeanUtils.copyProperties(orderStatus, order);
-            //order.setStatus(Order.Status.CREATED);
             return order;
         }).toList();
-        //log.info("saving order status");
-        orderRepository.saveAll(orderList);
+
     }
+
+
+    public Order obterPorCodigo(UUID id){
+        return this.orderRepository.findById(id).orElseThrow(()-> new ControllerNotFoundException("pedido nao existe"));
+    }
+
+    public Page<Order> buscarTodos(Pageable pageable){
+        return this.orderRepository.findAll(pageable);
+    }
+
+
 }

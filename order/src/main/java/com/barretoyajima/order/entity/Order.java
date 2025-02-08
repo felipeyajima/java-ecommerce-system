@@ -20,13 +20,12 @@ public class Order {
 
     @Id
     @Column
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Customer customer;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private List<Product> productList = new ArrayList<>();
 
     private LocalDateTime orderDateRequested;
