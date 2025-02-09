@@ -1,6 +1,6 @@
-package com.barretoyajima.order.repository;
+package com.barretoyajima.transport.repository;
 
-import com.barretoyajima.order.entity.Order;
+import com.barretoyajima.transport.entity.Delivery;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,15 +11,14 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, UUID> {
+public interface DeliveryRepository extends JpaRepository<Delivery, UUID> {
     @Transactional
     @Modifying
-    @Query("UPDATE Order u SET u.status = 'PAID' WHERE u.id = :id")
-    void paid(@Param("id") UUID id);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE Order u SET u.status = 'DELIVERED' WHERE u.id = :id")
+    @Query("UPDATE Delivery u SET u.status = 'DELIVERED' WHERE u.id = :id")
     void delivered(@Param("id") UUID id);
 
+    @Transactional
+    @Modifying
+    @Query("UPDATE Delivery u SET u.status = 'READY_TO_DELIVERY' WHERE u.id = :id")
+    void todelivery(@Param("id") UUID id);
 }

@@ -61,6 +61,9 @@ public class BillController {
         return ResponseEntity.noContent().build();
     }
 
-
+    @PutMapping("/{id}/change-status-to-paid")
+    public void changeStatusToPaid(@PathVariable UUID id){
+        this.billService.paid(id);
+    }
 
 }

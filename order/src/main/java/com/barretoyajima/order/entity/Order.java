@@ -38,6 +38,8 @@ public class Order {
     @OneToOne(cascade = CascadeType.ALL)
     private Payment payment;
     @OneToOne(cascade = CascadeType.ALL)
+    private Delivery delivery;
+    @OneToOne(cascade = CascadeType.ALL)
     private Address deliveryAddress;
 
     private Double deliveryPrice;
@@ -140,5 +142,13 @@ public class Order {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Delivery getDelivery() {
+        return delivery;
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
     }
 }

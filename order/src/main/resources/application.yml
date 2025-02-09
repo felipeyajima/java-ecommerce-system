@@ -22,13 +22,16 @@ spring:
             url: http://localhost:9000
           bill-api:
             url: http://localhost:9004
+          delivery-api:
+            url: http://localhost:9005
     stream:
       bindings:
         orderProcess-in-0:
           destination: OrderProcessing1 #exchange name
           group: orderingcreation1
         orderProcess-out-0:
-          destination: OrderPopulation
+          #destination: OrderPopulation
+          destination: OrderPaymentProcessing
           group: orderingcreation1
 
 

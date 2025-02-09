@@ -61,7 +61,9 @@ public class BillService {
         billRepository.deleteById(uuid);
     }
 
-
+    public void paid(UUID id){
+        this.billRepository.paid(id);
+    }
 
     private BillDto toDto(Bill bill){
         return new BillDto(

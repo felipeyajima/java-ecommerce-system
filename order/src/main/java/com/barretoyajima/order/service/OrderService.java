@@ -33,6 +33,9 @@ public class OrderService {
     @Autowired
     private BillClient billClient;
 
+    @Autowired
+    private DeliveryClient deliveryClient;
+
 
     @Autowired
     private OrderRepository orderRepository;
@@ -46,6 +49,9 @@ public class OrderService {
             Payment payment = new Payment();
             Product product = new Product();
             Order order = new Order();
+
+            //DELIVERY OBJECTS
+
 
 
             System.out.println("indo ate a api de customer");
@@ -68,9 +74,17 @@ public class OrderService {
 
             List<Product> products = new ArrayList<>();
 
+            // lista de produtos na requisição para a api de delivery
+            List<DeliveryProduct> deliveryProducts = new ArrayList<>();
+
+
             for (int i = 0; i < orderDetails.getProducts().size(); i++) {
                 ProductRequest productRequest = productClient.retrieveProduct(orderDetails.getProducts().get(i).getProductIdentificator());
+
                 Product internalProduct = new Product();
+                // produtos para requisicao de delivery
+                DeliveryProduct deliveryProduct = new DeliveryProduct();
+
                 internalProduct.setQuantity(orderDetails.getProducts().get(i).getQuantities());
                 internalProduct.setProductId(productRequest.getId());
                 internalProduct.setName(productRequest.getName());
@@ -78,7 +92,16 @@ public class OrderService {
                 internalProduct.setBrand(productRequest.getBrand());
                 internalProduct.setPrice(productRequest.getPrice());
 
+                // produtos para requisicao de delivery
+                deliveryProduct.setBrand(productRequest.getBrand());
+                deliveryProduct.setName(productRequest.getName());
+                deliveryProduct.setProductId(productRequest.getId());
+                deliveryProduct.setSku(productRequest.getSku());
+                deliveryProduct.setQuantity(orderDetails.getProducts().get(i).getQuantities());
+
+
                 products.add(internalProduct);
+                deliveryProducts.add(deliveryProduct);
 
                 totalCostOfProducts += internalProduct.getQuantity() * internalProduct.getPrice();
                 totalWeight += productRequest.getWeight();
@@ -116,9 +139,30 @@ public class OrderService {
             }
 
 
+            DeliveryRequest deliveryRequest = new DeliveryRequest();
+            deliveryRequest.setAddress(address.getPlace());
+            deliveryRequest.setAddressNumber(customerRequest.getAddressNumber());
+            deliveryRequest.setDeliveryPrice(deliveryCost);
+            deliveryRequest.setCustomer(customer.getName());
+            deliveryRequest.setProductList(deliveryProducts);
+            deliveryRequest.setProductsWeight(totalWeight);
+            deliveryRequest.setDemand(order.getId());
+
+            Delivery delivery = new Delivery();
+
+            try{
+                DeliveryResponse postedDelivery = deliveryClient.postDelivery(deliveryRequest);
+                delivery.setDelivery(postedDelivery.getId());
+            } catch (RuntimeException e) {
+                System.out.println("FALHA AO CHAMAR O SERVICO DE DELIVERY");
+            }
+
+            order.setDelivery(delivery);
+
             OrderStatus orderStatus = new OrderStatus();
             orderStatus.setStatus(OrderStatus.Status.CREATED);
             orderStatus.setOrderId(internalOrderId);
+
 
             orderRepository.save(order);
             return orderStatus;
@@ -149,4 +193,11 @@ public class OrderService {
     }
 
 
+    public void paid(UUID id) {
+        this.orderRepository.paid(id);
+    }
+
+    public void delivered(UUID id) {
+        this.orderRepository.delivered(id);
+    }
 }
