@@ -162,7 +162,8 @@ public class OrderService {
             OrderStatus orderStatus = new OrderStatus();
             orderStatus.setStatus(OrderStatus.Status.CREATED);
             orderStatus.setOrderId(internalOrderId);
-
+            orderStatus.setPaymentid(payment.getBill());
+            orderStatus.setDeliveryid(delivery.getDelivery());
 
             orderRepository.save(order);
             return orderStatus;

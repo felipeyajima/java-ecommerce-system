@@ -1,17 +1,7 @@
-spring.application.name: order
-server.port: 9003
+spring.application.name: worker
+server.port: 9006
 
 spring:
-#  datasource:
-#    url: jdbc:postgresql://localhost/order
-#    username: ${POSTGRES_USERNAME:postgres}
-#    password: ${POSTGRES_PASSWORD:postgres}
-#  jpa:
-#    generate-ddl: true
-#    show-sql: false
-
-
-
   cloud:
     openfeign:
       client:
@@ -26,15 +16,15 @@ spring:
             url: http://localhost:9005
     stream:
       bindings:
-        orderProcess-in-0:
-          destination: OrderProcessing1 #exchange name
+        orderArrangements-in-0:
+          destination: OrderPaymentProcessing #exchange name
           group: orderingcreation1
-        orderProcess-out-0:
-          #destination: OrderPopulation
-          destination: OrderPaymentProcessing
-          group: orderingcreation1
-
-
+          consumer:
+            max-attempts: 20
+    rabbit:
+      bindings:
+        consumer:
+          autoBindDlq: true
 
 
   rabbitmq:

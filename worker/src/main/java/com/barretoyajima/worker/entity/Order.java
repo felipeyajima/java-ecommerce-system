@@ -1,37 +1,39 @@
-package com.barretoyajima.order.event;
+package com.barretoyajima.worker.entity;
 
-import com.barretoyajima.order.entity.Product;
-import lombok.*;
+import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-
-@Builder
-public class OrderStatus {
-    //private UUID clientId;
-    //private List<Product> products = new ArrayList<>();
+@Entity
+@Table(name = "demand")
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    @Column(name = "demandid")
     private UUID orderId;
-    private Status status;
+    private String status;
     private UUID paymentid;
     private UUID deliveryid;
 
-    public enum Status {
-        CREATED,
-        PAID,
-        DELIVERED,
-        FINISHED
-    }
 
-    public OrderStatus(UUID orderId, Status status, UUID paymentid, UUID deliveryid) {
+    public Order(UUID id, UUID orderId, String status, UUID paymentid, UUID deliveryid) {
+        this.id = id;
         this.orderId = orderId;
         this.status = status;
         this.paymentid = paymentid;
         this.deliveryid = deliveryid;
     }
 
-    public OrderStatus() {
+    public Order() {
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public UUID getOrderId() {
@@ -42,11 +44,11 @@ public class OrderStatus {
         this.orderId = orderId;
     }
 
-    public Status getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

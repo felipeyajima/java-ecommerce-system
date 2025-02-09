@@ -1,30 +1,18 @@
-package com.barretoyajima.order.event;
+package com.barretoyajima.worker.event;
 
-import com.barretoyajima.order.entity.Product;
-import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-
-@Builder
 public class OrderStatus {
-    //private UUID clientId;
-    //private List<Product> products = new ArrayList<>();
+
     private UUID orderId;
-    private Status status;
+    private String status;
     private UUID paymentid;
     private UUID deliveryid;
 
-    public enum Status {
-        CREATED,
-        PAID,
-        DELIVERED,
-        FINISHED
-    }
 
-    public OrderStatus(UUID orderId, Status status, UUID paymentid, UUID deliveryid) {
+
+    public OrderStatus(UUID orderId, String status, UUID paymentid, UUID deliveryid) {
         this.orderId = orderId;
         this.status = status;
         this.paymentid = paymentid;
@@ -42,11 +30,11 @@ public class OrderStatus {
         this.orderId = orderId;
     }
 
-    public Status getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
