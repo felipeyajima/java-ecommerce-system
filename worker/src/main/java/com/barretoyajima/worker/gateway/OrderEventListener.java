@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.function.Consumer;
 
-@Configuration
+//@Configuration
 public class OrderEventListener {
-
+/*
     @Autowired
     private OrderWorkerService orderWorkerService;
 
@@ -25,5 +25,7 @@ public class OrderEventListener {
             orderWorkerService.determineArrangement(orderEvent.orderStatusList());
         };
     }
+
+ */
 
 }

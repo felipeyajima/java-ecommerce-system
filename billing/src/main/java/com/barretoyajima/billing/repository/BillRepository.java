@@ -19,4 +19,7 @@ public interface BillRepository extends JpaRepository<Bill, UUID> {
     @Query("UPDATE Bill u SET u.status = 'PAID' WHERE u.id = :id")
     void paid(@Param("id") UUID id);
 
+    @Query("SELECT CASE WHEN status = 'PAID' THEN true ELSE false END FROM Bill WHERE id = :id")
+    boolean isPaid(@Param("id") UUID id);
+
 }

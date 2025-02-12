@@ -66,4 +66,9 @@ public class BillController {
         this.billService.paid(id);
     }
 
+    @GetMapping("/{id}/is-paid")
+    public boolean isPaid(@PathVariable UUID id){
+        return this.billService.isPaid(id);
+    }
+
 }

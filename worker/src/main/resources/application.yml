@@ -16,11 +16,18 @@ spring:
             url: http://localhost:9005
     stream:
       bindings:
-        orderArrangements-in-0:
+        #orderArrangements-in-0:
+        proccessMessage-in-0:
           destination: OrderPaymentProcessing #exchange name
           group: orderingcreation1
-          consumer:
-            max-attempts: 20
+          #consumer:
+            #max-attempts: 20
+      rabbit:
+        bindings:
+          proccessMessage-in-0:
+            consumer:
+              acknowledgeMode: manual
+              requeueRejected: true
     rabbit:
       bindings:
         consumer:
