@@ -2,6 +2,8 @@ package com.barretoyajima.worker.gateway;
 
 import com.barretoyajima.worker.event.OrderStatus;
 import com.barretoyajima.worker.event.OrderStatusMessage;
+import com.barretoyajima.worker.integration.DeliveryChangeToReadyToDelivery;
+import com.barretoyajima.worker.integration.OrderChangeStatusClient;
 import com.barretoyajima.worker.integration.PaymentSituationClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
@@ -22,6 +24,11 @@ public class OrderStatusConsumer {
 
 
     private final PaymentSituationClient paymentSituationClient;
+
+    private final OrderChangeStatusClient orderChangeStatusClient;
+
+    private final DeliveryChangeToReadyToDelivery deliveryChangeToReadyToDelivery;
+
     private final StreamBridge streamBridge;
 
     @Autowired
@@ -30,8 +37,10 @@ public class OrderStatusConsumer {
     @Value("${spring.cloud.stream.bindings.validPayment-out-0.destination}")
     private String validPaymentExchange;
 
-    public OrderStatusConsumer(PaymentSituationClient paymentSituationClient, StreamBridge streamBridge) {
+    public OrderStatusConsumer(PaymentSituationClient paymentSituationClient, OrderChangeStatusClient orderChangeStatusClient, DeliveryChangeToReadyToDelivery deliveryChangeToReadyToDelivery, StreamBridge streamBridge) {
         this.paymentSituationClient = paymentSituationClient;
+        this.orderChangeStatusClient = orderChangeStatusClient;
+        this.deliveryChangeToReadyToDelivery = deliveryChangeToReadyToDelivery;
         this.streamBridge = streamBridge;
     }
 
@@ -39,36 +48,21 @@ public class OrderStatusConsumer {
     public Consumer<OrderStatusMessage> processPayment(PaymentSituationClient paymentClient, StreamBridge streamBridge) {
         return message -> {
 
-            /*
-            // adiviced by chatgpt
-            message.getOrderStatusList().forEach(order -> {
-                Boolean isValid = paymentClient.getSituation(order.getPaymentid());
-
-                if (Boolean.TRUE.equals(isValid)) {
-                    System.out.println("Pagamento validado para o pedido: " + order.getOrderId());
-                    // Envia o objeto 'order' para a fila ValidatedOrderQueue
-                    streamBridge.send("validatedOrder-out-0", order);
-
-                } else {
-                    System.out.println("Pagamento inválido para o pedido: " + order.getOrderId());
-                    // Lança exceção para que a mensagem seja reprocessada
-                    throw new RuntimeException("Pagamento inválido, reprocessando mensagem.");
-                }
-
-            });
-
-             */
-
-
             for (OrderStatus orderStatus : message.getOrderStatusList()) {
                 try {
                     Boolean isValid = paymentClient.getSituation(orderStatus.getPaymentid());
 
                     if (!isValid) {
                         //log.warn("Payment validation failed for paymentId: {}", orderStatus.getPaymentid());
-                        // Rejeita a mensagem para que seja reprocessada
+                        System.out.println("Rejeitando a mensagem para que seja reprocessada pois o pedido nao esta pago. PagtoID: " + orderStatus.getPaymentid() );
                         throw new AmqpRejectAndDontRequeueException("Payment validation failed");
                     }
+
+                    System.out.println("mudando status do pedido para pago");
+                    orderChangeStatusClient.changeToPaidOnOrderApi(orderStatus.getOrderId());
+
+                    System.out.println("mudando status da entrega para apto a entregar");
+                    deliveryChangeToReadyToDelivery.changeToReadyOnDeliveryApi(orderStatus.getDeliveryid());
 
                     // Se o pagamento for válido, envia para a nova fila
                     //log.info("Payment validated successfully, sending to valid payment queue. PaymentId: {}",
@@ -82,15 +76,13 @@ public class OrderStatusConsumer {
                     //        orderStatus.getPaymentid());
                     rabbitTemplate.send(validPaymentExchange, "", message1);
 
+
                 } catch (Exception e) {
                     //log.error("Error processing payment for paymentId: {}", orderStatus.getPaymentid(), e);
                     // Em caso de erro na chamada da API, rejeita a mensagem para reprocessamento
                     throw new AmqpRejectAndDontRequeueException("Error processing payment", e);
                 }
             }
-
-
-
 
         };
     }

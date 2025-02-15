@@ -194,11 +194,15 @@ public class OrderService {
     }
 
 
-    public void paid(UUID id) {
+    public boolean paid(UUID id) {
+
         this.orderRepository.paid(id);
+        return true;
     }
 
-    public void delivered(UUID id) {
+    public boolean delivered(UUID id) {
+
         this.orderRepository.delivered(id);
+        return true;
     }
 }

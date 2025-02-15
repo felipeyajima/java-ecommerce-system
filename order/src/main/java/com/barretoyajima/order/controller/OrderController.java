@@ -29,11 +29,13 @@ public class OrderController {
     }
 
     @PutMapping("/{id}/change-status-to-paid")
-    public void changeStatusToPaid(@PathVariable UUID id){
-        this.orderService.paid(id);
+    public boolean changeStatusToPaid(@PathVariable UUID id){
+
+        return this.orderService.paid(id);
+
     }
     @PutMapping("/{id}/change-status-to-delivered")
-    public void changeStatusToDelivered(@PathVariable UUID id){
-        this.orderService.delivered(id);
+    public boolean changeStatusToDelivered(@PathVariable UUID id){
+        return this.orderService.delivered(id);
     }
 }

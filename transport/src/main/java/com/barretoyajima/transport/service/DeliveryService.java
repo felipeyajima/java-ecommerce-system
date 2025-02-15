@@ -36,11 +36,15 @@ public class DeliveryService {
     }
 
 
-    public void delivered(UUID id) {
+    public boolean delivered(UUID id) {
+
         this.deliveryRepository.delivered(id);
+        return true;
     }
 
-    public void todelivery(UUID id) {
+    public boolean todelivery(UUID id) {
+
         this.deliveryRepository.todelivery(id);
+        return true;
     }
 }
