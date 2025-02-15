@@ -12,4 +12,7 @@ public class WorkerApplication {
 		SpringApplication.run(WorkerApplication.class, args);
 	}
 
+
+
+
 }
