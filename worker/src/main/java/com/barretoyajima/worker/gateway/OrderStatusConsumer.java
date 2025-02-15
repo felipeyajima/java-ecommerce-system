@@ -2,9 +2,7 @@ package com.barretoyajima.worker.gateway;
 
 import com.barretoyajima.worker.event.OrderStatus;
 import com.barretoyajima.worker.event.OrderStatusMessage;
-import com.barretoyajima.worker.integration.DeliveryChangeToReadyToDelivery;
-import com.barretoyajima.worker.integration.OrderChangeStatusClient;
-import com.barretoyajima.worker.integration.PaymentSituationClient;
+import com.barretoyajima.worker.integration.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.core.Message;
@@ -17,6 +15,8 @@ import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 @Component
@@ -24,10 +24,9 @@ public class OrderStatusConsumer {
 
 
     private final PaymentSituationClient paymentSituationClient;
-
     private final OrderChangeStatusClient orderChangeStatusClient;
-
     private final DeliveryChangeToReadyToDelivery deliveryChangeToReadyToDelivery;
+    private final ProductDecreaseStock productDecreaseStock;
 
     private final StreamBridge streamBridge;
 
@@ -37,10 +36,11 @@ public class OrderStatusConsumer {
     @Value("${spring.cloud.stream.bindings.validPayment-out-0.destination}")
     private String validPaymentExchange;
 
-    public OrderStatusConsumer(PaymentSituationClient paymentSituationClient, OrderChangeStatusClient orderChangeStatusClient, DeliveryChangeToReadyToDelivery deliveryChangeToReadyToDelivery, StreamBridge streamBridge) {
+    public OrderStatusConsumer(PaymentSituationClient paymentSituationClient, OrderChangeStatusClient orderChangeStatusClient, DeliveryChangeToReadyToDelivery deliveryChangeToReadyToDelivery, ProductDecreaseStock productDecreaseStock, StreamBridge streamBridge) {
         this.paymentSituationClient = paymentSituationClient;
         this.orderChangeStatusClient = orderChangeStatusClient;
         this.deliveryChangeToReadyToDelivery = deliveryChangeToReadyToDelivery;
+        this.productDecreaseStock = productDecreaseStock;
         this.streamBridge = streamBridge;
     }
 
@@ -63,6 +63,19 @@ public class OrderStatusConsumer {
 
                     System.out.println("mudando status da entrega para apto a entregar");
                     deliveryChangeToReadyToDelivery.changeToReadyOnDeliveryApi(orderStatus.getDeliveryid());
+
+
+                    System.out.println("Obtendo os produtos do pedido para reduzir no stock");
+                    List<String> products = orderChangeStatusClient.getProductsId(orderStatus.getOrderId());
+                    List<String> productQtd = orderChangeStatusClient.getProductsQtd(orderStatus.getOrderId());
+
+
+                    for (int i = 0; i < products.size(); i++){
+                        System.out.println("decreasing in " + products.get(i)+ " Stock product id : " + products.get(i));
+                        productDecreaseStock.decreaseInStock(UUID.fromString(products.get(i)), productQtd.get(i));
+                    }
+
+
 
                     // Se o pagamento for válido, envia para a nova fila
                     //log.info("Payment validated successfully, sending to valid payment queue. PaymentId: {}",

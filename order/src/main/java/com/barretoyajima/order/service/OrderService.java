@@ -205,4 +205,12 @@ public class OrderService {
         this.orderRepository.delivered(id);
         return true;
     }
+
+    public List<String> findAllProductsFromOrder(UUID id){
+        return this.orderRepository.findAllProductNamesByPedidoId(id);
+    }
+
+    public List<String> findAllProductsQuantityFromOrder(UUID id){
+        return this.orderRepository.findAllProductQuantitysByPedidoId(id);
+    }
 }
