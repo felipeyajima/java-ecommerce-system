@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @FeignClient(name = "order-api")
-public interface OrderChangeStatusClient {
+public interface OrderClient {
 
     @PutMapping("/orders/{id}/change-status-to-paid")
     boolean changeToPaidOnOrderApi(@PathVariable("id") UUID id);

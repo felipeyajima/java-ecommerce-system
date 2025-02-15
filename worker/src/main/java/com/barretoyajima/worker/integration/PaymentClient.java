@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.UUID;
 
 @FeignClient(name = "bill-api")
-public interface PaymentSituationClient {
+public interface PaymentClient {
 
     @GetMapping("/bills/{id}/is-paid")
     boolean getSituation(@PathVariable("id")UUID id);

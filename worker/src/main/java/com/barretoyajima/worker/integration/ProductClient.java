@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.UUID;
 
-@FeignClient(name = "delivery-api")
-public interface DeliveryChangeToReadyToDelivery {
-    @PutMapping("/deliveries/{id}/change-status-to-ready-to-delivery")
-    boolean changeToReadyOnDeliveryApi(@PathVariable("id") UUID id);
+@FeignClient(name = "products-api")
+public interface ProductClient {
 
+    @PutMapping("/products/{id}/decreaseQuantityOnStockIn/{qtd}")
+    void decreaseInStock(@PathVariable("id") UUID id, @PathVariable("qtd") String qtd);
 }

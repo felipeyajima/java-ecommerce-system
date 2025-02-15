@@ -23,10 +23,10 @@ import java.util.function.Consumer;
 public class OrderStatusConsumer {
 
 
-    private final PaymentSituationClient paymentSituationClient;
-    private final OrderChangeStatusClient orderChangeStatusClient;
-    private final DeliveryChangeToReadyToDelivery deliveryChangeToReadyToDelivery;
-    private final ProductDecreaseStock productDecreaseStock;
+    private final PaymentClient paymentClient;
+    private final OrderClient orderClient;
+    private final DeliveryClient deliveryClient;
+    private final ProductClient productClient;
 
     private final StreamBridge streamBridge;
 
@@ -36,16 +36,16 @@ public class OrderStatusConsumer {
     @Value("${spring.cloud.stream.bindings.validPayment-out-0.destination}")
     private String validPaymentExchange;
 
-    public OrderStatusConsumer(PaymentSituationClient paymentSituationClient, OrderChangeStatusClient orderChangeStatusClient, DeliveryChangeToReadyToDelivery deliveryChangeToReadyToDelivery, ProductDecreaseStock productDecreaseStock, StreamBridge streamBridge) {
-        this.paymentSituationClient = paymentSituationClient;
-        this.orderChangeStatusClient = orderChangeStatusClient;
-        this.deliveryChangeToReadyToDelivery = deliveryChangeToReadyToDelivery;
-        this.productDecreaseStock = productDecreaseStock;
+    public OrderStatusConsumer(PaymentClient paymentClient, OrderClient orderClient, DeliveryClient deliveryClient, ProductClient productClient, StreamBridge streamBridge) {
+        this.paymentClient = paymentClient;
+        this.orderClient = orderClient;
+        this.deliveryClient = deliveryClient;
+        this.productClient = productClient;
         this.streamBridge = streamBridge;
     }
 
     @Bean
-    public Consumer<OrderStatusMessage> processPayment(PaymentSituationClient paymentClient, StreamBridge streamBridge) {
+    public Consumer<OrderStatusMessage> processPayment(PaymentClient paymentClient, StreamBridge streamBridge) {
         return message -> {
 
             for (OrderStatus orderStatus : message.getOrderStatusList()) {
@@ -59,20 +59,20 @@ public class OrderStatusConsumer {
                     }
 
                     System.out.println("mudando status do pedido para pago");
-                    orderChangeStatusClient.changeToPaidOnOrderApi(orderStatus.getOrderId());
+                    orderClient.changeToPaidOnOrderApi(orderStatus.getOrderId());
 
                     System.out.println("mudando status da entrega para apto a entregar");
-                    deliveryChangeToReadyToDelivery.changeToReadyOnDeliveryApi(orderStatus.getDeliveryid());
+                    deliveryClient.changeToReadyOnDeliveryApi(orderStatus.getDeliveryid());
 
 
                     System.out.println("Obtendo os produtos do pedido para reduzir no stock");
-                    List<String> products = orderChangeStatusClient.getProductsId(orderStatus.getOrderId());
-                    List<String> productQtd = orderChangeStatusClient.getProductsQtd(orderStatus.getOrderId());
+                    List<String> products = orderClient.getProductsId(orderStatus.getOrderId());
+                    List<String> productQtd = orderClient.getProductsQtd(orderStatus.getOrderId());
 
 
                     for (int i = 0; i < products.size(); i++){
                         System.out.println("decreasing in " + products.get(i)+ " Stock product id : " + products.get(i));
-                        productDecreaseStock.decreaseInStock(UUID.fromString(products.get(i)), productQtd.get(i));
+                        productClient.decreaseInStock(UUID.fromString(products.get(i)), productQtd.get(i));
                     }
 
 
