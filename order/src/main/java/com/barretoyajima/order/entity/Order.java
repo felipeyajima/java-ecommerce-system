@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@NoArgsConstructor
-@Getter
-@Setter
+//@NoArgsConstructor
+//@Getter
+//@Setter
 @Entity
 @Table(name = "ORDER_PROCESSED")
-@Builder
-@AllArgsConstructor
+//@Builder
+//@AllArgsConstructor
 public class Order {
 
     @Id
@@ -55,6 +55,26 @@ public class Order {
     }
 
      */
+
+    public Order(UUID id, Customer customer, List<Product> productList, LocalDateTime orderDateRequested, Double totalWeight, Double totalAmount, LocalDateTime deliveryEstimation, Payment payment, Delivery delivery, Address deliveryAddress, Double deliveryPrice, String status) {
+        this.id = id;
+        this.customer = customer;
+        this.productList = productList;
+        this.orderDateRequested = orderDateRequested;
+        this.totalWeight = totalWeight;
+        this.totalAmount = totalAmount;
+        this.deliveryEstimation = deliveryEstimation;
+        this.payment = payment;
+        this.delivery = delivery;
+        this.deliveryAddress = deliveryAddress;
+        this.deliveryPrice = deliveryPrice;
+        this.status = status;
+    }
+
+    public Order() {
+    }
+
+
 
     public UUID getId() {
         return id;
