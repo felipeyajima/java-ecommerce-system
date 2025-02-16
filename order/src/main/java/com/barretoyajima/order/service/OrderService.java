@@ -194,11 +194,23 @@ public class OrderService {
     }
 
 
-    public void paid(UUID id) {
+    public boolean paid(UUID id) {
+
         this.orderRepository.paid(id);
+        return true;
     }
 
-    public void delivered(UUID id) {
+    public boolean delivered(UUID id) {
+
         this.orderRepository.delivered(id);
+        return true;
+    }
+
+    public List<String> findAllProductsFromOrder(UUID id){
+        return this.orderRepository.findAllProductNamesByPedidoId(id);
+    }
+
+    public List<String> findAllProductsQuantityFromOrder(UUID id){
+        return this.orderRepository.findAllProductQuantitysByPedidoId(id);
     }
 }

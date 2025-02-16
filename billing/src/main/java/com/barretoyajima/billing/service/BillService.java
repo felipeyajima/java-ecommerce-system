@@ -65,6 +65,10 @@ public class BillService {
         this.billRepository.paid(id);
     }
 
+    public boolean isPaid(UUID id){
+        return this.billRepository.isPaid(id);
+    }
+
     private BillDto toDto(Bill bill){
         return new BillDto(
                 bill.getId(),

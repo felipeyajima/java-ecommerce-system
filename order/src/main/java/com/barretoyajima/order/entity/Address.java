@@ -6,7 +6,7 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Builder
+//@Builder
 @Entity
 @Table(name="addressorder")
 public class Address {

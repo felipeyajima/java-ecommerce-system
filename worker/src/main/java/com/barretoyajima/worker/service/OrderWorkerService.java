@@ -19,30 +19,6 @@ public class OrderWorkerService {
     }
 
 
-    public void determineArrangement(List<OrderStatus> orderStatuses) {
-        orderStatuses.forEach(order -> {
-            if(order.getStatus().equals("CREATED")) {
-                Order savingOrder = new Order();
-                savingOrder.setDeliveryid(order.getDeliveryid());
-                savingOrder.setPaymentid(order.getPaymentid());
-                savingOrder.setStatus(order.getStatus());
-                savingOrder.setOrderId(order.getOrderId());
-                orderRepository.save(savingOrder);
-
-
-                System.out.println("order id: " + order.getOrderId());
-                System.out.println("delivery id: " + order.getDeliveryid());
-                System.out.println("payment id: " + order.getPaymentid());
-            } else {
-
-                System.out.println("test");
-
-
-            }
-        });
-    }
-
-
     public Page<Order> buscarTodos(Pageable pageable){
         return this.orderRepository.findAll(pageable);
     }

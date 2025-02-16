@@ -3,6 +3,10 @@ server.port: 9006
 
 spring:
   cloud:
+    #function:
+    #  composition:
+    #    enabled: false
+    #  definition: processDelivery;processPayment
     openfeign:
       client:
         config:
@@ -14,17 +18,69 @@ spring:
             url: http://localhost:9004
           delivery-api:
             url: http://localhost:9005
+          order-api:
+            url: http://localhost:9003
     stream:
       bindings:
-        orderArrangements-in-0:
+        processPayment-in-0:
           destination: OrderPaymentProcessing #exchange name
           group: orderingcreation1
+          content-type: application/json
           consumer:
-            max-attempts: 20
-    rabbit:
-      bindings:
-        consumer:
-          autoBindDlq: true
+            maxAttempts: 6
+            backOffInitialInterval: 10000
+            backOffMaxInterval: 10000
+            backOffMultiplier: 1.0
+        validPayment-out-0:
+          destination: ValidPaymentOrders
+          group: queue
+          content-type: application/json
+          #producer:
+          #  required-groups: valid-payment-group
+        ###### DELIVERY
+        #processDelivery-in-0:
+        #  destination: ValidPaymentOrders #exchange name
+        #  group: queue
+        #  content-type: application/json
+        #  consumer:
+        #    maxAttempts: 6
+        #    backOffInitialInterval: 10000
+        #    backOffMaxInterval: 10000
+        #    backOffMultiplier: 1.0
+
+      rabbit:
+        bindings:
+          processPayment-in-0:
+            consumer:
+              bindQueue: true
+              bindExchange: false
+              #deadLetterExchange: OrderPaymentProcessing.dlx
+              #deadLetterQueueName: OrderPaymentProcessing.dlq
+              autoBindDlq: true
+              dlqTtl: 60000
+              requeueRejected: true
+              retryEnabled: true
+              requeue: true
+              dlqDeadLetterExchange: OrderPaymentProcessing
+          #### DELIVERY
+          #processDelivery-in-0:
+          #  consumer:
+          #    bindQueue: true
+          #    bindExchange: false
+              #deadLetterExchange: OrderPaymentProcessing.dlx
+              #deadLetterQueueName: OrderPaymentProcessing.dlq
+          #    autoBindDlq: true
+          #    dlqTtl: 60000
+          #    requeueRejected: true
+          #    retryEnabled: true
+          #    requeue: true
+          #    dlqDeadLetterExchange: ValidPaymentOrders
+          #    dlqDeadLetterExchangeType: direct
+          validPayment-out-0:
+            producer:
+              bindQueue: true
+              bindExchange: true
+              exchangeType: topic
 
 
   rabbitmq:

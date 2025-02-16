@@ -35,13 +35,20 @@ public class DeliveryController {
     }
 
     @PutMapping("/{id}/change-status-to-delivered")
-    public void changeStatusToDelivered(@PathVariable UUID id){
-        this.deliveryService.delivered(id);
+    public boolean changeStatusToDelivered(@PathVariable UUID id){
+
+        return this.deliveryService.delivered(id);
     }
 
     @PutMapping("/{id}/change-status-to-ready-to-delivery")
-    public void changeStatusToReadyToDelivery(@PathVariable UUID id){
-        this.deliveryService.todelivery(id);
+    public boolean changeStatusToReadyToDelivery(@PathVariable UUID id){
+
+        return this.deliveryService.todelivery(id);
+    }
+
+    @GetMapping("/{id}/isDelivered")
+    public boolean isDelivered(@PathVariable UUID id){
+        return this.deliveryService.isDelivered(id);
     }
 
 }

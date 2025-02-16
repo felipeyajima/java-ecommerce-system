@@ -21,4 +21,8 @@ public interface DeliveryRepository extends JpaRepository<Delivery, UUID> {
     @Modifying
     @Query("UPDATE Delivery u SET u.status = 'READY_TO_DELIVERY' WHERE u.id = :id")
     void todelivery(@Param("id") UUID id);
+
+
+    @Query("SELECT CASE WHEN status = 'DELIVERED' THEN true ELSE false END FROM Delivery WHERE id = :id")
+    boolean isDelivered(@Param("id") UUID id);
 }
