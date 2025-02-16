@@ -2,7 +2,6 @@
 
 [![OpenAPI](https://img.shields.io/badge/CLEAN%20ARCHITECTURE-8A2BE2)](https://www.openapis.org/)
 [![OpenAPI](https://img.shields.io/badge/JAVA-FC6A31)](https://www.openapis.org/)
-[![OpenAPI](https://img.shields.io/badge/DOCKER-2496ED)](https://www.openapis.org/)
 [![OpenAPI](https://img.shields.io/badge/SPRING%20BOOT-FC6A31)](https://www.openapis.org/)
 [![OpenAPI](https://img.shields.io/badge/OPEN%20API-EF0092)](https://www.openapis.org/)
 [![OpenAPI](https://img.shields.io/badge/POSTGRESQL-8A2BE2)](https://www.openapis.org/)
