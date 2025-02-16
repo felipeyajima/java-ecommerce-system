@@ -20,4 +20,7 @@ public interface OrderClient {
     @GetMapping("/orders/{id}/produtosQtd")
     List<String> getProductsQtd(@PathVariable("id") UUID id);
 
+    @PutMapping("/orders/{id}/change-status-to-delivered")
+    boolean changeToDeliveredOnOrderApi(@PathVariable("id") UUID id);
+
 }

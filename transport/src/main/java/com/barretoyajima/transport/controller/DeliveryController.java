@@ -46,4 +46,9 @@ public class DeliveryController {
         return this.deliveryService.todelivery(id);
     }
 
+    @GetMapping("/{id}/isDelivered")
+    public boolean isDelivered(@PathVariable UUID id){
+        return this.deliveryService.isDelivered(id);
+    }
+
 }

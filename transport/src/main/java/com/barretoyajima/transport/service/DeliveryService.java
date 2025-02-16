@@ -47,4 +47,8 @@ public class DeliveryService {
         this.deliveryRepository.todelivery(id);
         return true;
     }
+
+    public boolean isDelivered(UUID id){
+        return deliveryRepository.isDelivered(id);
+    }
 }

@@ -100,4 +100,60 @@ public class OrderStatusConsumer {
         };
     }
 
+
+/*
+    @Bean
+    public Consumer<OrderStatusMessage> processDelivery(DeliveryClient deliveryClient, StreamBridge streamBridge) {
+
+        return message -> {
+
+            for (OrderStatus orderStatus : message.getOrderStatusList()) {
+                try {
+                    Boolean isValid = deliveryClient.getDeliverySituation(orderStatus.getDeliveryid());
+
+                    if (!isValid) {
+                        //log.warn("Payment validation failed for paymentId: {}", orderStatus.getPaymentid());
+                        System.out.println("Rejeitando a mensagem para que seja reprocessada pois o pedido ainda nao foi entregue. PedidoID: " + orderStatus.getOrderId() );
+                        throw new AmqpRejectAndDontRequeueException("Delivery validation failed");
+                    }
+
+
+                    System.out.println("changing order status to DELIVERED");
+                    orderClient.changeToDeliveredOnOrderApi(orderStatus.getOrderId());
+
+                    // Se o pagamento for válido, envia para a nova fila
+                    //log.info("Payment validated successfully, sending to valid payment queue. PaymentId: {}",
+                    //        orderStatus.getPaymentid());
+
+
+                    Message message1 = MessageBuilder
+                            .withBody(new ObjectMapper().writeValueAsBytes(orderStatus))
+                            .setContentType(MessageProperties.CONTENT_TYPE_JSON)
+                            .build();
+
+                    //log.info("Payment validated successfully, sending to valid payment queue. PaymentId: {}",
+                    //        orderStatus.getPaymentid());
+                    rabbitTemplate.send(validPaymentExchange, "", message1);
+
+
+
+
+                } catch (Exception e) {
+                    //log.error("Error processing payment for paymentId: {}", orderStatus.getPaymentid(), e);
+                    // Em caso de erro na chamada da API, rejeita a mensagem para reprocessamento
+                    throw new AmqpRejectAndDontRequeueException("Error processing delivery", e);
+                }
+            }
+
+        };
+
+    }
+
+
+ */
+
+
+
+
+
 }
