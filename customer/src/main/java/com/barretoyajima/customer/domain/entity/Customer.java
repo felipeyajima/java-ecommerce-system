@@ -1,17 +1,11 @@
-package com.barretoyajima.customer.model;
+package com.barretoyajima.customer.domain.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.barretoyajima.customer.infra.controller.exception.ControllerSystemException;
 
 import java.util.UUID;
 
-@Data
-@Entity
-@Table(name="customer")
 public class Customer {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
     private String cpf;
@@ -23,8 +17,18 @@ public class Customer {
     public Customer(UUID id, String name, String cpf, String email, String address, Integer addressNumber) {
         this.id = id;
         this.name = name;
+
+
+        if(cpf == null || !cpf.matches("\\d{3}\\.\\d{3}\\.\\d{3}\\-\\d{2}")){
+            throw new ControllerSystemException("invalid cpf!");
+        }
         this.cpf = cpf;
+
+        if(email == null || !email.contains("@")){
+            throw new ControllerSystemException("invalid email");
+        }
         this.email = email;
+
         this.address = address;
         this.addressNumber = addressNumber;
     }

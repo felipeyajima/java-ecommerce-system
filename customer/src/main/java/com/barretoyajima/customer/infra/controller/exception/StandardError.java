@@ -1,21 +1,19 @@
-package com.barretoyajima.customer.controller.exception;
+package com.barretoyajima.customer.infra.controller.exception;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.Instant;
 
+@Data
 public class StandardError {
+
     private Instant timestamp;
     private Integer status;
     private String error;
     private String message;
     private String path;
 
-    public StandardError() {
-    }
+    public StandardError(){}
 
     public Instant getTimestamp() {
         return timestamp;
